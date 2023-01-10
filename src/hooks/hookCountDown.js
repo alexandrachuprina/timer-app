@@ -2,35 +2,37 @@ import { useState, useEffect } from "react";
 
 const useCountdown = ({
     countDownStarted,
-    timeInMilliSec
+    timeInSec
 }) => {
 
-    // console.log(`       NEW         `)
-    // console.log(`timeInMilliSec ${timeInMilliSec}`)
+    console.log(`       NEW         `)
+    console.log(`timeInSec ${timeInSec}`)
 
     // const CountDown = new Date().getTime() + timeInMilliSec;
-    const [countdownInMilliSec, setCountdownInMillisec] = useState(CountDown - new Date().getTime());
+    const [countdownInSec, setCountdownInSec] = useState(timeInSec);
 
     // console.log(`CountDown ${CountDown}`)
-    // console.log(`countdownInMilliSec ${countdownInMilliSec}`)
+    console.log(`countdownInSec ${countdownInSec}`)
 
     useEffect(() => {
         let interval;
-        if (timeInMilliSec > 0) {
-            let currentTime = CountDown - new Date().getTime();
-            // console.log(`currentTime ${currentTime}`)
+        if (timeInSec > 0) {
+            let currentTime = timeInSec - 1000;
+
+            console.log(`currentTime ${currentTime}`)
+
             interval = setInterval(() => {
-                setCountdownInMillisec(currentTime)
+                setCountdownInSec(currentTime)
             }, 1000);
         } else if (!countDownStarted) {
             clearInterval(interval);
-            setCountdownInMillisec(0)
+            setCountdownInSec(0)
         }
         return () => clearInterval(interval);
-    }, [countDownStarted, timeInMilliSec, CountDown, countdownInMilliSec])
+    }, [])
 
-    const minutes = Math.floor(countdownInMilliSec / (60 * 1000));
-    const seconds = parseInt(((countdownInMilliSec % (60 * 1000)) / 1000));
+    const minutes = Math.floor(countdownInSec / 60);
+    const seconds = parseInt((countdownInSec % (60 * 1000)));
 
     return [minutes, seconds];
 }

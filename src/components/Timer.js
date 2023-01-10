@@ -32,7 +32,7 @@ const Timer = () => {
     }
 
     const [countDownStarted, setCountDownStarted] = useState(false); // to toggle start-stop
-    const [timeInMilliSec, setTimeInMilliSec] = useState(0);
+    const [timeInSec, setTimeInSec] = useState(0);
 
     // TO START/ TO STOP TIMER
     const startTimer = () => {
@@ -40,19 +40,19 @@ const Timer = () => {
         if (count) {
             const index = count - 1;
             const timeInput = timeInputs[index];
-            setTimeInMilliSec(timeInput * 60 * 1000)
+            setTimeInSec(timeInput * 60)
         } const timeInput = timeInputs[0];
-        setTimeInMilliSec(timeInput * 60 * 1000)
+        setTimeInSec(timeInput * 60)
     }
 
     const stopTimer = () => {
         setCountDownStarted(false);
-        setTimeInMilliSec(0)
+        setTimeInSec(0)
     }
 
     const [minutes, seconds] = useCountdown({
         countDownStarted,
-        timeInMilliSec,
+        timeInSec,
     })
 
     return (
