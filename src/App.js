@@ -1,25 +1,24 @@
-import logo from './logo.svg';
-import './App.css';
+import Timer from "./components/Timer";
+import styled from "styled-components";
+import Pointer from "./components/Pointer";
+import CurrentTime from './components/CurrentTime'
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <StyledApp>
+      <Pointer />
+      <CurrentTime />
+      <Timer />
+    </StyledApp>
   );
 }
 
 export default App;
+
+const StyledApp = styled.div`
+    box-sizing: border-box;
+    height: 100vh;
+    width: 100vw;
+
+    padding: 20vh 40vw 20vh 40vw;
+`
