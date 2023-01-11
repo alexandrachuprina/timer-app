@@ -18,7 +18,8 @@ export default function Pointer() {
     return (
         <div style={{
             position: 'absolute',
-            backgroundColor: 'red',
+            // backgroundColor: 'red',
+            border: '1px solid black',
             borderRadius: '50%',
             opacity: 0.8,
             transform: `translate(${position.x}px, ${position.y}px)`,

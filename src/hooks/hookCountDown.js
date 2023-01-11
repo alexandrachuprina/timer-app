@@ -2,37 +2,41 @@ import { useState, useEffect } from "react";
 
 const useCountdown = ({
     countDownStarted,
-    timeInSec
+    timeInSec,
+    setTimeInSec,
+    setCountDownStarted
 }) => {
 
-    console.log(`       NEW         `)
-    console.log(`timeInSec ${timeInSec}`)
+    // console.log(`       HOOK         `)
+    // console.log(`timeInSec ${timeInSec}`)
 
-    // const CountDown = new Date().getTime() + timeInMilliSec;
-    const [countdownInSec, setCountdownInSec] = useState(timeInSec);
+    const [countdownInSec, setCountdownInSec] = useState(0);
 
-    // console.log(`CountDown ${CountDown}`)
     console.log(`countdownInSec ${countdownInSec}`)
 
     useEffect(() => {
         let interval;
         if (timeInSec > 0) {
-            let currentTime = timeInSec - 1000;
+            let currentTime = timeInSec - 1;
 
-            console.log(`currentTime ${currentTime}`)
+            // console.log(`currentTime ${currentTime}`)
 
             interval = setInterval(() => {
-                setCountdownInSec(currentTime)
+                setCountdownInSec(currentTime);
+                setTimeInSec(timeInSec - 1)
+                // alert('Hi')
             }, 1000);
         } else if (!countDownStarted) {
             clearInterval(interval);
             setCountdownInSec(0)
+        } else if (timeInSec === 0) {
+            setCountDownStarted(!countDownStarted)
         }
         return () => clearInterval(interval);
-    }, [])
+    }, [countdownInSec, countDownStarted])
 
     const minutes = Math.floor(countdownInSec / 60);
-    const seconds = parseInt((countdownInSec % (60 * 1000)));
+    const seconds = parseInt((countdownInSec % 60));
 
     return [minutes, seconds];
 }
