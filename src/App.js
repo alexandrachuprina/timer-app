@@ -7,7 +7,7 @@ function App() {
   return (
     <StyledApp>
       <Pointer />
-      <CurrentTime />
+      {/* <CurrentTime /> */}
       <Timer />
     </StyledApp>
   );

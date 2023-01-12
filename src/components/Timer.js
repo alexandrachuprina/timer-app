@@ -38,10 +38,10 @@ const Timer = () => {
     const [countDownStarted, setCountDownStarted] = useState(false); // to toggle start-stop
     const [timeInSec, setTimeInSec] = useState(0);
 
-
+    const [animation, setAnimation] = useState(false);
+    const [animationTime, setANimationTime] = useState(0)
 
     // TO START/ TO STOP TIMER
-    let circle;
     const startTimer = () => {
         setCountDownStarted(true);
         const index = count - 1;
@@ -49,21 +49,25 @@ const Timer = () => {
         let timeInput = timeInputs[index];
         if (count !== 0) {
             setTimeInSec(timeInput * 60);
-            circle = timeInput * 60;
+            setANimationTime(timeInput * 60 * 4.005);
+            setAnimation(true)
             // console.log(`timeInput true ${timeInput}`)
         } else if (count === 0) {
             timeInput = timeInputs[0];
             setTimeInSec(timeInput * 60);
-            circle = timeInput * 60;
+            setANimationTime(timeInput * 60 * 4.005);
+            setAnimation(true)
             // console.log(`timeInput false ${timeInput}`)
         }
     }
 
     // console.log(`timeInSec ${timeInSec}`)
+    console.log(`antime ${animationTime}`)
 
     const stopTimer = () => {
         setCountDownStarted(false);
-        setTimeInSec(0)
+        setTimeInSec(0);
+        setAnimation(false)
     }
 
     const [minutes, seconds] = useCountdown({
@@ -74,23 +78,27 @@ const Timer = () => {
     })
 
     return (
-        <StyledTimer timeInSec={timeInSec} circle={circle}>
-            <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="160px" height="160px">
-                <defs>
-                    <linearGradient id="GradientColor">
-                        <stop offset="0%" stop-color="#e91e63" />
-                        <stop offset="100%" stop-color="#673ab7" />
-                    </linearGradient>
-                </defs>
-                <circle cx="80" cy="80" r="70" stroke-linecap="round" timeInSec={timeInSec} circle={circle} />
-            </svg>
-
+        <StyledTimer>
             <h2>Your pomodoro timer</h2>
+            <StyledTime>
+                {animation ?
+                    <TrueCircle animationTime={animationTime}>
+                        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="160px" height="160px">
+                            <circle cx='80' cy='80' r="70" animationTime={animationTime}> </circle>
+                        </svg>
+                    </TrueCircle>
+                    :
+                    <FalseCircle>
+                        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="160px" height="160px">
+                            <circle cx="80" cy="80" r="70" />
+                        </svg>
+                    </FalseCircle>}
 
-            <StyledCount>
-                {minutes < 10 ? <h1>0{minutes}:</h1> : <h1>{minutes}:</h1>}
-                {seconds < 10 ? <h1>0{seconds}</h1> : <h1>{seconds}</h1>}
-            </StyledCount>
+                <StyledCount>
+                    {minutes < 10 ? <h1>0{minutes}:</h1> : <h1>{minutes}:</h1>}
+                    {seconds < 10 ? <h1>0{seconds}</h1> : <h1>{seconds}</h1>}
+                </StyledCount>
+            </StyledTime>
 
 
             {countDownStarted ?
@@ -124,20 +132,41 @@ const StyledTimer = styled.div`
     display: flex;
     flex-direction: column;
     width: 100%;
+`
+const StyledTime = styled.div`
+    height: 200px;
+`
+const Animating = keyframes`
+    100% {
+        stroke-dashoffset: 0;
+    }
+`
+
+const TrueCircle = styled.div`
+    transform: rotate(-90deg);
+    align-self: center;
+
+    circle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    fill: none;
+    stroke: red;
+    stroke-width: 10;
+    stroke-dasharray: 1200;
+    stroke-dashoffset: 1200;
+    animation-duration: ${props => props.animationTime}s;
+    animation-name: ${Animating};
+}
+`
+
+const FalseCircle = styled.div`
+    align-self: center;
 
     circle {
     fill: none;
-    stroke: red;
+    stroke: black;
     stroke-width: 2;
-    stroke-dasharray: ${props => props.circle};
-    stroke-dashoffset: ${props => props.circle};
-    animation: animating ${props => props.circle}s ease-out both;
-}
-
-@keyframes animating{
-    to {
-        stroke-dashoffset: 0;
-    }
 }
 `
 
@@ -145,7 +174,6 @@ const StyledCount = styled.div`
     display: flex;
     flex-direction: row;
     justify-content: center;
-    /* align-self: center; */
     height: 100px;
     width: 100%;
 `
@@ -158,7 +186,7 @@ const StyledButtonStart = styled.button`
 const StyledInput = styled.input`
     display: flex;
     flex-direction: row;
-    box-sizing: border-box;
+    box-sizing: border - box;
     width: 100%;
     margin: 4% 0px;
 `
@@ -168,8 +196,8 @@ const StyledLog = styled.div`
     grid-template-columns: 50% 50%;
     grid-template-rows: 50% 50%;
     grid-template-areas:
-        'text button'
-        'list .';
+    'text button'
+    'list .';
     align-items: center;
 `
 const Text = styled.p`
@@ -180,7 +208,6 @@ const StyledList = styled.ul`
     grid-area: 'list';
     padding: 0;
     margin: 0;
-
 `
 const StyledButtonClear = styled.button`
     grid-area: 'button';
