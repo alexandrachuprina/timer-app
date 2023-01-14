@@ -1,14 +1,27 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import { keyframes } from 'styled-components';
 import UsedTimers from './UsedTimers';
 import { useCountdown } from '../hooks/hookCountDown';
+import theme from '../styles/Theme';
 
 const Timer = () => {
     const [buttonSet, setButtonSet] = useState(false); // to toggle set-save
     const [timeInputs, setTimeInputs] = useState([]);
     const [count, setCount] = useState(0); // to track current timeInput
     const timeInputRef = useRef();
+
+    const [time, setTime] = useState(new Date().toLocaleTimeString());
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setTime(new Date().toLocaleTimeString())
+        }, 1000)
+
+        return () => {
+            clearInterval(interval);
+        }
+    }, [])
 
     // console.log(`       NEW        `)
     // console.log(`count ${count}`)
@@ -39,7 +52,7 @@ const Timer = () => {
     const [timeInSec, setTimeInSec] = useState(0);
 
     const [animation, setAnimation] = useState(false);
-    const [animationTime, setANimationTime] = useState(0)
+    const [animationtime, setANimationTime] = useState(0)
 
     // TO START/ TO STOP TIMER
     const startTimer = () => {
@@ -49,20 +62,20 @@ const Timer = () => {
         let timeInput = timeInputs[index];
         if (count !== 0) {
             setTimeInSec(timeInput * 60);
-            setANimationTime(timeInput * 60 * 4.005);
+            setANimationTime(timeInput * 60 * 3);
             setAnimation(true)
             // console.log(`timeInput true ${timeInput}`)
         } else if (count === 0) {
             timeInput = timeInputs[0];
             setTimeInSec(timeInput * 60);
-            setANimationTime(timeInput * 60 * 4.005);
+            setANimationTime(timeInput * 60 * 3);
             setAnimation(true)
             // console.log(`timeInput false ${timeInput}`)
         }
     }
 
     // console.log(`timeInSec ${timeInSec}`)
-    console.log(`antime ${animationTime}`)
+    // console.log(`antime ${animationTime}`)
 
     const stopTimer = () => {
         setCountDownStarted(false);
@@ -74,134 +87,226 @@ const Timer = () => {
         countDownStarted,
         timeInSec,
         setTimeInSec,
-        setCountDownStarted
+        setCountDownStarted,
+
     })
 
+    const top = window.innerHeight / 2.3;
+
     return (
-        <StyledTimer>
-            <h2>Your pomodoro timer</h2>
-            <StyledTime>
+        <StyledPage>
+            <StyledTimer>
+                <h1>Your pomodoro timer</h1>
+
                 {animation ?
-                    <TrueCircle animationTime={animationTime}>
-                        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="160px" height="160px">
-                            <circle cx='80' cy='80' r="70" animationTime={animationTime}> </circle>
-                        </svg>
-                    </TrueCircle>
+                    <>
+                        <TrueCircle animationtime={animationtime}>
+                            <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width={theme.cizes.cize} height={theme.cizes.cize}>
+                                <circle cx={theme.cizes.cx} cy={theme.cizes.cy} r={theme.cizes.r} animationtime={animationtime}> top={top}</circle>
+                            </svg>
+                        </TrueCircle>
+
+                    </>
                     :
-                    <FalseCircle>
-                        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="160px" height="160px">
-                            <circle cx="80" cy="80" r="70" />
-                        </svg>
-                    </FalseCircle>}
+                    null}
 
                 <StyledCount>
                     {minutes < 10 ? <h1>0{minutes}:</h1> : <h1>{minutes}:</h1>}
                     {seconds < 10 ? <h1>0{seconds}</h1> : <h1>{seconds}</h1>}
                 </StyledCount>
-            </StyledTime>
 
+                <StyledButtons>
 
-            {countDownStarted ?
-                <StyledButtonStart onClick={() => stopTimer()}>Stop</StyledButtonStart>
-                :
-                <StyledButtonStart onClick={() => startTimer()}>Start</StyledButtonStart>}
+                    {buttonSet ?
+                        <>
+                            <StyledButtonStart onClick={saveInput}>Save</StyledButtonStart>
+                            <StyledInput type='text' ref={timeInputRef} />
+                        </>
+                        :
+                        <>
+                            <StyledButtonStart onClick={handleToggleSet}>Set</StyledButtonStart>
+                            {countDownStarted ?
+                                <StyledButtonStart onClick={() => stopTimer()}>Stop</StyledButtonStart>
+                                :
+                                <StyledButtonStart onClick={() => startTimer()}>Start</StyledButtonStart>}
+                        </>}
 
-            {buttonSet ?
-                <>
-                    <StyledButtonStart onClick={saveInput}>Save</StyledButtonStart>
-                    <StyledInput type='text' placeholder='Enter time' ref={timeInputRef} />
-                </>
-                :
-                <StyledButtonStart onClick={handleToggleSet}>Set</StyledButtonStart>}
-
+                </StyledButtons>
+            </StyledTimer>
 
             <StyledLog>
-                <Text>Used timers</Text>
-                <StyledButtonClear onClick={handleClearInputs}>Clear</StyledButtonClear>
-                <StyledList>
-                    <UsedTimers timeInputs={timeInputs} />
-                </StyledList>
+                <header>
+                    <h2>Your today's tasks </h2>
+                    <p>{time}</p>
+                </header>
             </StyledLog>
-        </StyledTimer>
+
+        </StyledPage>
     )
 }
 
 export default Timer;
 
+const StyledPage = styled.div`
+
+    display: flex;
+    flex-direction: row;
+    box-sizing: border-box;
+
+    h1 {
+        font-size: 4.5rem;
+        font-family: 'Helvetica', sans-serif;
+        font-weight: normal;
+        text-transform: uppercase;
+        padding: 0;
+        margin: 0;
+        color: white;
+    }
+
+    h2 {
+        font-size: 2rem;
+        font-family: 'Helvetica', sans-serif;
+        font-weight: 200;
+        padding: 0;
+        margin: 0;
+        color: white;
+    }
+
+    p {
+        font-size: 1rem;
+        font-family: 'Helvetica', sans-serif;
+        font-weight: 200;
+        color: white;
+    }
+`
 const StyledTimer = styled.div`
     display: flex;
     flex-direction: column;
-    width: 100%;
+    width: 35vw;
+    justify-content: center;
+    margin-right: 20vw;
 `
-const StyledTime = styled.div`
-    height: 200px;
+const StyledButtons = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
 `
 const Animating = keyframes`
     100% {
         stroke-dashoffset: 0;
     }
 `
-
 const TrueCircle = styled.div`
     transform: rotate(-90deg);
-    align-self: center;
+
+    position: absolute;
+    z-index: 1;
+    top: 41vh; // -0.3 
+    left: 12vw; // +0.14
 
     circle {
-    position: absolute;
-    top: 0;
-    left: 0;
     fill: none;
-    stroke: red;
-    stroke-width: 10;
+    /* stroke: ${theme.colors.tangerine}; */
+    stroke: white;
+    stroke-width: 4;
     stroke-dasharray: 1200;
     stroke-dashoffset: 1200;
-    animation-duration: ${props => props.animationTime}s;
+    animation-duration: ${props => props.animationtime}s;
     animation-name: ${Animating};
+
+    opacity: 0.6;
 }
 `
-
-const FalseCircle = styled.div`
-    align-self: center;
-
-    circle {
-    fill: none;
-    stroke: black;
-    stroke-width: 2;
-}
-`
-
 const StyledCount = styled.div`
     display: flex;
     flex-direction: row;
+    align-items: center;
     justify-content: center;
-    height: 100px;
+    padding: 3vh 0vw 3vh 0vw;
+    
+    height: ${theme.cizes.d};
     width: 100%;
 `
-
 const StyledButtonStart = styled.button`
-    width: 100%;
-    margin: 3% 0% 3% 0%;
-`
+    border: 2px solid white;
+    /* background-color: ${theme.colors.lightGrey}; */
+    background-color: transparent;
+    border-radius: 30px;
+    color: white;
+    /* opacity: 0.3; */
+    box-sizing: border-box;
+    font-family: 'Helvetica', sans-serif;
+    font-weight: 200;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    vertical-align: middle;
 
+    height: 40px;
+    width: 10vw;
+
+:hover {
+    background-color: black;
+    border: 2px solid black;
+    color: ${theme.colors.lightGrey};
+    opacity: 1;
+}
+`
 const StyledInput = styled.input`
-    display: flex;
-    flex-direction: row;
-    box-sizing: border - box;
+     -webkit-appearance: none;
+    -moz-appearance:none;
+    -ms-appearance: none;
+    -o-appearance: none;
+    appearance: none;
+
+    /* display: flex; */
+    border-radius: 30px;
+    /* flex-direction: row; */
+    box-sizing: border-box;
+    margin-left: 20px;
     width: 100%;
-    margin: 4% 0px;
+    height: 100%;
+    border: none;
+    font-size: 1rem;
+    text-transform: uppercase;
+    border: 2px solid ${theme.colors.basicGrey};
+    text-align: center;
+    background-color: ${theme.colors.basicGrey};
+    opacity: 0.2;
+
+    &:hover {
+        opacity: 1;
+        border: 2px solid black;
+        background-color: black;
+    }
+
+    &:focus {
+        opacity: 1;
+        border: 2px solid black;
+        background-color: black;
+        color: ${theme.colors.lightGrey};
+        outline: none;
+    }
 `
 
 const StyledLog = styled.div`
-    display: grid;
-    grid-template-columns: 50% 50%;
-    grid-template-rows: 50% 50%;
-    grid-template-areas:
-    'text button'
-    'list .';
-    align-items: center;
-`
-const Text = styled.p`
-    grid-area: 'text';
+    display: flex;
+    flex-direction: column;
+    width: 60vw;
+
+    header {
+        display: flex;
+        flex-direction: column;
+        
+    }
 `
 const StyledList = styled.ul`
     list-style: none;
@@ -213,3 +318,4 @@ const StyledButtonClear = styled.button`
     grid-area: 'button';
     height: 100%;
 `
+

@@ -12,7 +12,7 @@ const useCountdown = ({
 
     const [countdownInSec, setCountdownInSec] = useState(0);
 
-    console.log(`countdownInSec ${countdownInSec}`)
+    // console.log(`countdownInSec ${countdownInSec}`)
 
     useEffect(() => {
         let interval;
@@ -34,6 +34,7 @@ const useCountdown = ({
         }
         return () => clearInterval(interval);
     }, [countdownInSec, countDownStarted])
+
 
     const minutes = Math.floor(countdownInSec / 60);
     const seconds = parseInt((countdownInSec % 60));
