@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import { keyframes } from 'styled-components';
-import UsedTimers from './UsedTimers';
 import { useCountdown } from '../hooks/hookCountDown';
 import theme from '../styles/Theme';
 

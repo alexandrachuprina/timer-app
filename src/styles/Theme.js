@@ -1,13 +1,9 @@
 const theme = {
     colors: {
-        basicGrey: '#BDBDBD',
-        lightGrey: '#E6E6E6',
-        superLightGrey: '#F7F7F7',
-        basicRed: '',
-        brightRed: '',
-        darkRed: '',
-        tangerine: '#F28500',
+
     },
+
+    // for SVG (progess bar animation)
     cizes: {
         cize: '340px',
         cy: '170',
