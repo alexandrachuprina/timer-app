@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useContext } from 'react';
 import styled from 'styled-components';
 import { useColors } from '../../hooks/hookChangeColors';
 

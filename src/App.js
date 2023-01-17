@@ -3,7 +3,6 @@ import Dayline from "./components/dayline.js/Dayline";
 
 import styled from "styled-components";
 
-import { useState, createContext } from 'react';
 
 function App() {
 
