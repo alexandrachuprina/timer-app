@@ -4,7 +4,12 @@ const useCountdown = ({
     countDownStarted,
     timeInSec,
     setTimeInSec,
-    setCountDownStarted
+    setCountDownStarted,
+    setFirstButton,
+    setSecondButton,
+    setThirdButton,
+    setAnimation,
+    animation
 }) => {
 
     // console.log(`       HOOK         `)
@@ -30,7 +35,12 @@ const useCountdown = ({
             clearInterval(interval);
             setCountdownInSec(0)
         } else if (timeInSec === 0) {
-            setCountDownStarted(!countDownStarted)
+            setCountDownStarted(!countDownStarted);
+
+            setFirstButton(true);
+            setSecondButton(false);
+            setThirdButton(false);
+            setAnimation(!animation);
         }
         return () => clearInterval(interval);
     }, [countdownInSec, countDownStarted])

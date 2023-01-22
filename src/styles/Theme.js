@@ -10,7 +10,7 @@ const theme = {
         cx: '170',
         r: '150',
         top: '41vh',
-        left: '12vw',
+        left: '16vw',
         d: '300px', // r * 2
     }
 }

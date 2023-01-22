@@ -3,13 +3,18 @@ import styled from 'styled-components';
 import { keyframes } from 'styled-components';
 import { useCountdown } from '../hooks/hookCountDown';
 import theme from '../styles/Theme';
+import Customizer from '../features/customizer/Customizer';
+import Timeline from './Timeline';
+import List from '../components/tasks/List'
 
 const Timer = () => {
-    const [buttonSet, setButtonSet] = useState(false); // to toggle set-save
-    const [timeInputs, setTimeInputs] = useState([]);
-    const [count, setCount] = useState(0); // to track current timeInput
+    const [firstButton, setFirstButton] = useState(true);
+    const [secondButton, setSecondButton] = useState(false);
+    const [thirdButton, setThirdButton] = useState(false);
+    const [timeInput, setTimeInput] = useState(0);
     const timeInputRef = useRef();
 
+    // CURRENT TIME
     const [time, setTime] = useState(new Date().toLocaleTimeString());
 
     useEffect(() => {
@@ -22,64 +27,42 @@ const Timer = () => {
         }
     }, [])
 
-    // console.log(`       NEW        `)
-    // console.log(`count ${count}`)
-
     // TO SET TIMER 
     const handleToggleSet = () => {
-        setButtonSet(!buttonSet)
+        setFirstButton(false);
+        setSecondButton(true);
     }
 
-    const saveInput = () => {
+    const handleSaveInput = () => {
         const newInput = parseInt(timeInputRef.current.value);
-        if (!isNaN(newInput)) {
-            setTimeInputs(prev => {
-                return [...prev, newInput]
-            });
-            handleToggleSet();
-            setCount(count + 1);
-        } handleToggleSet();
-    }
-
-    const handleClearInputs = () => {
-        setTimeInputs(prev => {
-            return []
-        });
+        setTimeInput(newInput);
+        setSecondButton(false);
+        setThirdButton(true);
     }
 
     const [countDownStarted, setCountDownStarted] = useState(false); // to toggle start-stop
     const [timeInSec, setTimeInSec] = useState(0);
-
-    const [animation, setAnimation] = useState(false);
-    const [animationtime, setANimationTime] = useState(0)
+    const [animation, setAnimation] = useState(false); // to toggle animation
 
     // TO START/ TO STOP TIMER
-    const startTimer = () => {
+    const timeInputInSec = timeInput * 60;
+
+    const handleStartTimer = () => {
         setCountDownStarted(true);
-        const index = count - 1;
-        // console.log(`index ${index}`)
-        let timeInput = timeInputs[index];
-        if (count !== 0) {
-            setTimeInSec(timeInput * 60);
-            setANimationTime(timeInput * 60 * 3);
-            setAnimation(true)
-            // console.log(`timeInput true ${timeInput}`)
-        } else if (count === 0) {
-            timeInput = timeInputs[0];
-            setTimeInSec(timeInput * 60);
-            setANimationTime(timeInput * 60 * 3);
-            setAnimation(true)
-            // console.log(`timeInput false ${timeInput}`)
-        }
+
+        setTimeInSec(timeInputInSec);
+        setAnimation(!animation);
     }
 
-    // console.log(`timeInSec ${timeInSec}`)
-    // console.log(`antime ${animationTime}`)
-
-    const stopTimer = () => {
+    const handleStopTimer = () => {
         setCountDownStarted(false);
         setTimeInSec(0);
-        setAnimation(false)
+        setAnimation(false);
+
+        setFirstButton(true);
+        setSecondButton(false);
+        setThirdButton(false);
+        setAnimation(!animation)
     }
 
     const [minutes, seconds] = useCountdown({
@@ -87,27 +70,25 @@ const Timer = () => {
         timeInSec,
         setTimeInSec,
         setCountDownStarted,
-
+        setFirstButton,
+        setSecondButton,
+        setThirdButton,
+        setAnimation,
+        animation
     })
 
     const top = window.innerHeight / 2.3;
+    const oneWidth = window.innerWidth / 24;
+    const height = window.innerWidth * 0.2;
+    const halfOfTimeInput = timeInputInSec / 2;
+    console.log(`halfOfTimeInput ${halfOfTimeInput}`)
 
     return (
         <StyledPage>
             <StyledTimer>
-                <h1>Your pomodoro timer</h1>
+                <h1 contenteditable="true">Your pomodoro timer</h1>
 
-                {animation ?
-                    <>
-                        <TrueCircle animationtime={animationtime}>
-                            <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width={theme.cizes.cize} height={theme.cizes.cize}>
-                                <circle cx={theme.cizes.cx} cy={theme.cizes.cy} r={theme.cizes.r} animationtime={animationtime}> top={top}</circle>
-                            </svg>
-                        </TrueCircle>
-
-                    </>
-                    :
-                    null}
+                <Customizer />
 
                 <StyledCount>
                     {minutes < 10 ? <h1>0{minutes}:</h1> : <h1>{minutes}:</h1>}
@@ -116,41 +97,129 @@ const Timer = () => {
 
                 <StyledButtons>
 
-                    {buttonSet ?
+                    {firstButton ?
+                        <StyledButtonStart onClick={handleToggleSet}>Set</StyledButtonStart>
+                        : null}
+                    {secondButton ?
                         <>
-                            <StyledButtonStart onClick={saveInput}>Save</StyledButtonStart>
+                            <StyledButtonStart onClick={handleSaveInput}>Save</StyledButtonStart>
                             <StyledInput type='text' ref={timeInputRef} />
                         </>
-                        :
+                        : null}
+                    {thirdButton ?
                         <>
-                            <StyledButtonStart onClick={handleToggleSet}>Set</StyledButtonStart>
                             {countDownStarted ?
-                                <StyledButtonStart onClick={() => stopTimer()}>Stop</StyledButtonStart>
+                                <>
+                                    <StyledButtonStart onClick={handleStopTimer}>Stop</StyledButtonStart>
+                                </>
                                 :
-                                <StyledButtonStart onClick={() => startTimer()}>Start</StyledButtonStart>}
-                        </>}
-
+                                <>
+                                    <StyledButtonStart onClick={handleStartTimer}>Start</StyledButtonStart>
+                                </>
+                            }
+                        </>
+                        : null}
                 </StyledButtons>
             </StyledTimer>
 
             <StyledLog>
                 <header>
-                    <h2>Your today's tasks </h2>
+                    <h2 contenteditable="true">Your today's tasks </h2>
                     <p>{time}</p>
                 </header>
+
+                <List />
+                <Timeline />
             </StyledLog>
 
+            {animation ?
+                <Circle top={top} oneWidth={oneWidth} height={height}>
+                    <PgwidgetBarL height={height}>
+                        <PgwidgetProgressLeft halfOfTimeInput={halfOfTimeInput} height={height} />
+                    </PgwidgetBarL>
+                    <PgwidgetBarR height={height}>
+                        <PgwidgetProgressRight halfOfTimeInput={halfOfTimeInput} height={height} />
+                    </PgwidgetBarR>
+                </Circle>
+                : null}
         </StyledPage>
     )
 }
 
 export default Timer;
 
-const StyledPage = styled.div`
+const Left = keyframes`
+    0% {transform: rotate(0deg) }
+    50% {transform: rotate(90deg) }
+    100% { transform: rotate(180deg) }
+`;
 
+const PgwidgetProgressLeft = styled.div`
+    position: absolute;
+    /* top: ${p => p.top}px; */
+    width: 100%;
+    height: 100%;
+    background: white;
+    clip: rect(0px, 10vw, 20vw, 0px);
+    border-radius: 100%;
+    opacity: 0.1;
+    animation-name: ${Left}; 
+    animation-timing-function: linear;
+    animation-duration: ${p => p.halfOfTimeInput}s; 
+    animation-fill-mode: forwards;
+  `;
+
+const PgwidgetProgressRight = styled.div`
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: white;
+    clip: rect(0px, 10vw, 20vw, 0px);
+    border-radius: 100%;
+    opacity: 0.1;
+   
+    animation-name: ${Left}; 
+    animation-duration: ${p => p.halfOfTimeInput}s; 
+    animation-delay: ${p => p.halfOfTimeInput}s; 
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+  `;
+
+const Circle = styled.div`
+    /* background-color: red; */
+    position: absolute; 
+    top: ${p => p.top}px;
+    left: calc(${p => p.oneWidth}px * 3.65);
+    width: 20vw;
+    height: ${p => p.height}px;
+`;
+
+const PgwidgetBarL = styled.div`
+    /* background-color: blue; */
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    clip: rect(0, 20vw, 20vw, 10vw);
+    border-radius: 100%;
+    z-index: 1;
+`;
+
+const PgwidgetBarR = styled.div`
+    /* background-color: red; */
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    clip: rect(0, 20vw, 20vw, 10vw);
+    border-radius: 100%;
+    z-index: 1;
+    transform: rotate(180deg);
+`;
+
+const StyledPage = styled.div`
     display: flex;
     flex-direction: row;
     box-sizing: border-box;
+    height: 100%;
 
     h1 {
         font-size: 4.5rem;
@@ -182,7 +251,7 @@ const StyledTimer = styled.div`
     display: flex;
     flex-direction: column;
     width: 35vw;
-    justify-content: center;
+    /* justify-content: center; */
     margin-right: 20vw;
 `
 const StyledButtons = styled.div`
@@ -307,14 +376,5 @@ const StyledLog = styled.div`
         
     }
 `
-const StyledList = styled.ul`
-    list-style: none;
-    grid-area: 'list';
-    padding: 0;
-    margin: 0;
-`
-const StyledButtonClear = styled.button`
-    grid-area: 'button';
-    height: 100%;
-`
+
 

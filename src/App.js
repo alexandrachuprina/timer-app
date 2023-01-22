@@ -1,27 +1,34 @@
 import Timer from "./components/Timer";
-import Dayline from "./components/dayline.js/Dayline";
+import Dayline from "./components/Dayline";
+import Range from "./components/Range";
 
 import styled from "styled-components";
+import { useState } from "react";
 
 
 function App() {
+  const [range, setRange] = useState(100)
 
+  const w = window.clientWidth - window.scrollX;
   return (
-    <StyledApp>
-      <Dayline />
+    <StyledApp range={range} w={w}>
+      <Dayline range={range} />
       <Timer />
+      {/* <Range range={range} setRange={setRange} /> */}
     </StyledApp>
   );
 }
 
 export default App;
 
+
 const StyledApp = styled.div`
   box-sizing: border-box;
   height: 100vh;
-  width: 100vw;
+  width: ${p => p.range}vw;
+  /* width: ${w => w.w}vw; */
 
-  padding: 6vh 10vw 2vh 10vw;
+  padding: 6vh 10vw 0vh 10vw;
 
   // BACKGROUND
   background-color:hsla(240,63%,9%,1);
