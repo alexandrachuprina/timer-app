@@ -14,13 +14,11 @@ function App() {
     <StyledApp range={range} w={w}>
       <Dayline range={range} />
       <Timer />
-      {/* <Range range={range} setRange={setRange} /> */}
     </StyledApp>
   );
 }
 
 export default App;
-
 
 const StyledApp = styled.div`
   box-sizing: border-box;
@@ -28,7 +26,7 @@ const StyledApp = styled.div`
   width: ${p => p.range}vw;
   /* width: ${w => w.w}vw; */
 
-  padding: 6vh 10vw 0vh 10vw;
+  padding: 6vh 10vw 6vh 10vw;
 
   // BACKGROUND
   background-color:hsla(240,63%,9%,1);
