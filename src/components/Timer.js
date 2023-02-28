@@ -196,7 +196,7 @@ const PgwidgetProgressRight = styled.div`
 const Circle = styled.div`
   position: absolute; 
   top: ${p => p.top}px;
-  left: 13.5vw;
+  left: 15.25vw;
   width: 20vw;
   height: ${p => p.height}px;
 `

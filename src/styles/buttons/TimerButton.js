@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const TimerButton = styled.button`
-margin: 0;
+  margin: 0;
   border: 2px solid white;
   background-color: transparent;
   border-radius: 30px;

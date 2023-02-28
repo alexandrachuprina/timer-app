@@ -25,6 +25,7 @@ export default function AddTask({ handleAddTask }) {
   return (
     <StyledAdd>
       <SmallInput
+        autoComplete="off"
         id="AddTaskForm"
         type="text"
         value={text}
